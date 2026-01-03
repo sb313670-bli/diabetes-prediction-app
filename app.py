@@ -100,9 +100,11 @@ if predict_btn:
         st.success("✅ LOW RISK OF DIABETES")
 
 if reset_btn:
-    st.experimental_rerun()
+    st.rerun()
+
 
 # ---------------- EXTRA INFO ----------------
 st.markdown("<hr>", unsafe_allow_html=True)
 st.info("⚠️ This application is designed for academic demonstration only.")
+
 
