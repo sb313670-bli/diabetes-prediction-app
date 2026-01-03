@@ -1,45 +1,107 @@
 import streamlit as st
-import joblib
-import pandas as pd
 
-# Load trained model
-model = joblib.load("diabetes_model.pkl")
+# ---------------- PAGE CONFIG ----------------
+st.set_page_config(
+    page_title="DIABETES PREDICTION",
+    layout="wide"
+)
 
-st.title("Diabetes Prediction App")
-st.write("Enter patient details:")
+# ---------------- CSS STYLE ----------------
+st.markdown("""
+<style>
+body {
+    background-color: #f5f7fa;
+}
+.main-title {
+    text-align: center;
+    font-size: 40px;
+    font-weight: bold;
+    color: #0A2647;
+}
+.sub-title {
+    text-align: center;
+    color: #555;
+}
+.card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+}
+.stButton>button {
+    width: 100%;
+    height: 55px;
+    font-size: 18px;
+    border-radius: 10px;
+}
+.predict {
+    background-color: #0A2647;
+    color: white;
+}
+.reset {
+    background-color: #888;
+    color: white;
+}
+</style>
+""", unsafe_allow_html=True)
 
-# User inputs
-age = st.number_input("Age", min_value=0)
-chol = st.number_input("Cholesterol", min_value=0)
-glu = st.number_input("Stabilized Glucose", min_value=0)
-hdl = st.number_input("HDL", min_value=0)
-hba1c = st.number_input("HbA1c", min_value=0.0)
-bp_sys = st.number_input("Systolic BP", min_value=0)
-bp_dia = st.number_input("Diastolic BP", min_value=0)
+# ---------------- TITLE ----------------
+st.markdown("<div class='main-title'>🩺 DIABETES PREDICTION</div>", unsafe_allow_html=True)
+st.markdown("<div class='sub-title'>Professional Health Risk Analysis System</div>", unsafe_allow_html=True)
+st.markdown("<hr>", unsafe_allow_html=True)
 
-if st.button("Predict"):
-    # IMPORTANT: order must match training
-    input_data = pd.DataFrame([[
-        age,
-        chol,
-        glu,
-        hdl,
-        hba1c,
-        bp_sys,
-        bp_dia
-    ]], columns=[
-        "age",
-        "chol",
-        "stab_glu",
-        "hdl",
-        "glyhb",
-        "bp.1s",
-        "bp.1d"
-    ])
+# ---------------- INPUT SECTION ----------------
+st.markdown("<div class='card'>", unsafe_allow_html=True)
+st.subheader("📋 Patient Details")
 
-    result = model.predict(input_data)
+col1, col2, col3 = st.columns(3)
 
-    if result[0] == 1:
-        st.error("Diabetic")
+with col1:
+    age = st.number_input("Age (Years)", 1, 120)
+    glucose = st.number_input("Glucose Level (mg/dL)", 50, 400)
+
+with col2:
+    hba1c = st.number_input("HbA1c (%)", 3.0, 15.0)
+    cholesterol = st.number_input("Cholesterol (mg/dL)", 100, 400)
+
+with col3:
+    systolic = st.number_input("Systolic BP (mmHg)", 80, 200)
+    diastolic = st.number_input("Diastolic BP (mmHg)", 40, 140)
+
+st.markdown("</div>", unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
+
+# ---------------- BUTTONS ----------------
+colA, colB, colC = st.columns(3)
+
+with colA:
+    predict_btn = st.button("🔍 Predict Risk")
+
+with colB:
+    preview_btn = st.button("👁 Preview Input")
+
+with colC:
+    reset_btn = st.button("🔄 Reset")
+
+# ---------------- ACTIONS ----------------
+if preview_btn:
+    st.info(f"""
+    👤 Age: {age}  
+    🧪 Glucose: {glucose}  
+    🩸 HbA1c: {hba1c}  
+    🧬 Cholesterol: {cholesterol}  
+    💓 BP: {systolic}/{diastolic}
+    """)
+
+if predict_btn:
+    if glucose > 140 or hba1c > 6.5 or systolic > 140:
+        st.error("⚠️ HIGH RISK OF DIABETES")
     else:
-        st.success("Non-Diabetic")
+        st.success("✅ LOW RISK OF DIABETES")
+
+if reset_btn:
+    st.experimental_rerun()
+
+# ---------------- EXTRA INFO ----------------
+st.markdown("<hr>", unsafe_allow_html=True)
+st.info("⚠️ This application is designed for academic demonstration only.")
